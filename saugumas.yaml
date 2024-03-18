@@ -5,65 +5,61 @@
   tasks:
     - name: 1. Update default username and password in mikrotik to strong
       community.routeros.command:
-        command:
-          -/user add name="m5h7yt?3#^&3k3i*0" password="r47yh$%io9&@!8" group=full
-    - name: Remove default username
-      community.routeros.command:
-        command:
-          -/user remove admin
-
+        commands:
+          -/user set 0 name="m5h7yt?3#^&3k3i*0" 
+          -/user set 0 password="r47yh$%io9&@!8"
     - name: 2.1. Identify services such ftp, telnet, ssh and others..
       community.routeros.command:
-        command:
+        commands:
           -/ip service> print
     - name: 2.2. Disable services not in use (FTP,TELNET,SSH)
       community.routeros.command:
-        command:
+        commands:
           -/ip service disable telnet,ftp,ssh
 
     - name: 2.3.1 Print mac addresses
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-scan interface=all  
 
     - name: 2.3.2 Disable MAC telnet (mac address connection)
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server set allowed-interface-list=none
 
     - name: 2.3.3 check print disabled mac telnet  
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server print
 
     - name: 2.4.1 Print allowed interface list for mac winbox server
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server mac-winbox print 
 
     - name: 2.4.2 Disable allowed interface list for mac winbox server
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server mac-winbox set allowed-interface-list=none
 
     - name: 2.4.3 check print disabled allowed interface list for mac winbox server 
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server mac-winbox print 
 
     - name: 2.5.1 Print if mac ping is enabled or disabled
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server ping print 
 
     - name: 2.5.2 Disable allowed interface list for mac winbox server
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server ping set enabled=no 
 
     - name: 2.5.3 rint if mac ping is enabled or disabled
       community.routeros.command:
-        command:
+        commands:
           -/tool mac-server ping print 
 
     - name: 3.1. Check for RouterOS updates
