@@ -2,7 +2,7 @@
 
 VM_NAME="mikrotikRouter"
 VM_USER="NAME"
-VM_PASSWORD={{MYPASSW}}
+VM_PASSWORD="{{MYPASSW}}"
 privateIP="10.0.1.11"
 
 sudo mkdir /etc/ansible
