@@ -1,7 +1,6 @@
-- hosts: all
-  vars:
-    ansible_become: yes
-    ansible_become_pass: {{mypassword}}
+---
+- hosts: routeros
+  gather_facts: false
   tasks:
     - name: 1. Update default username and password in mikrotik to strong
       community.routeros.command:
@@ -57,7 +56,7 @@
         commands:
           -/tool mac-server ping set enabled=no 
 
-    - name: 2.5.3 rint if mac ping is enabled or disabled
+    - name: 2.5.3 Print if mac ping is enabled or disabled
       community.routeros.command:
         commands:
           -/tool mac-server ping print 
@@ -74,9 +73,36 @@
           - /system package update install
       when: system_update_print is not search('System is already up to date')
 
-        
+    - name: 4.1 Import blacklist for firewall
+      community.routeros.command:
+        commands:
+          - /tool fetch address=https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt mode=http src-path=/downloads/ipsum.txt :delay 10
+          - /import ipsum.txt
+
+    - name: 4.2 add Ip's to blaclist line by line
+      community.routeros.command:
+        commands: 
+          # neaisku koks mikrotik tik extension turetu buti skrito failo, kad runnintu
+          - /tool fetch address="scripto adresas is github tarkim vadinasi readIp" mode=http src-path=/downloads/readIp :delay 10
+          - /import readIp
+          - /system script run readIp
+
+    - name: 4.3 add firewall rules
+      community.routeros.command:
+         commands:
+         #Router and internal network protection, no internal servers, LAN is friendly
+         - /add chain=input   action=drop   connection-state=invalid log=yes                 comment="Disallow weird packets" 
+         - /add chain=input   action=accept connection-state=new         in-interface=LAN    comment="Allow LAN access to router and Internet"
+         - /add chain=input   action=accept connection-state=established                     comment="Allow connections that originated from LAN"
+         - /add chain=input   action=accept connection-state=related                         comment="Allow connections that originated from LAN"
+         - /add chain=input   action=accept protocol=icmp                                    comment="Allow ping ICMP from anywhere"
+         - / add chain=input dst-address-list=blacklist log=yes action=drop                  comment="Disallow ips from blacklist"
+         - /add chain=forward action=drop   connection-state=invalid                         comment="Disallow weird packets" 
+         - /add chain=forward action=accept connection-state=new         in-interface=LAN    comment="Allow LAN access to router and Internet"
+         - /add chain=forward action=accept connection-state=established                     comment="Allow connections that originated from LAN"
+         - /add chain=forward action=accept connection-state=related                         comment="Allow connections that originated from LAN"               
+         - / add chain=forwad dst-address-list=blacklist log=yes action=drop                 comment="Disallow ips from blacklist"
+    
+   
 
       
-          
-          
-   

@@ -1,0 +1,52 @@
+# set some parameters
+:local fileName "ipsum.txt";
+:local addressList "blacklist";
+# set to "\r\n" below for Windows text files, "\n" for everything else
+:local lineDelimiter "\r\n";
+
+# get a hold on the file
+:local filePointer [/file find name=$fileName];
+# check if it exists
+:if ($filePointer != "") do={
+# file exists, start a counter for the entries inserted
+	:local added 0;
+# read the configuration file into a buffer
+	:local buffer [/file get $filePointer contents];
+# record the total buffer size for later use in do loop cycling through the lines
+	:local bufferSize [:len $buffer];
+# create variable to hold buffer offset from start to current line end
+	:local lineEnd 0;
+# create variable that will hold the current line
+	:local line "";
+# create variable that keeps track of current position in buffer
+	:local position 0;
+# go through buffer
+	:do {
+# find next line end
+		:set lineEnd [:find $buffer $lineDelimiter $position];
+# fetch the line
+		:set line [:pick $buffer $position $lineEnd];
+# advance position skipping the newlines
+		:set position ($lineEnd + [:len $lineDelimiter]);
+# verify that the line isn't empty
+		:if ([:len $line] > 0) do={
+			/ip firewall address-list add list="$addressList" address="$line";
+			:set added ($added + 1);
+		} else={
+# invalid entry in file, log that fact
+			:log warning "Cannot insert address-list entry, corrupt line in file!"
+		}
+	} while=($lineEnd < $bufferSize);
+# check how many entries were inserted - if any, log for informational purposes
+	:if ($added > 0) do={
+		:log info "Inserted $added new address-list entries."
+	} else={
+# if 0, check if the buffer read from the file was larger than 0. if so we should have had inserts
+		:if ($bufferSize > 0) do={
+			:log warning "address-list insertion file had content, but none were inserted!"
+		}
+	}
+} else={
+# file could not be opened. log that fact
+	:log warning "Unable to open file $fileName!"
+}
