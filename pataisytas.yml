@@ -1,0 +1,135 @@
+---
+- name: RouterOS test with network_cli connection
+  hosts: routeros
+  gather_facts: false
+  tasks:
+
+  - name: Gather system resources
+    community.routeros.command:
+      commands:
+        - /system resource print
+    register: system_resource_print
+
+  - name: Show system resources
+    debug:
+      var: system_resource_print.stdout_lines
+
+  - name: Gather facts
+    community.routeros.facts:
+
+
+  - name: enable ssh strong-crypt
+    community.routeros.command:
+        commands:
+          - /ip ssh set strong-crypt=yes allow-none-crypto=none
+
+  - name: 1. Update default username and password in mikrotik to strong
+    community.routeros.command:
+        commands:
+          - /user set 0 name="m5h7yt?3#^&3k3i*0"
+          - /user set 0 password="r47yh$%io9&@!8"
+
+  - name: 2.1. Identify services such ftp, telnet, ssh and others..
+    community.routeros.command:
+        commands:
+          - /ip service print
+    register: service_print
+
+  - name: Show services
+    debug:
+      var: service_print.stdout_lines
+
+  - name: 2.2. Disable services not in use (FTP,TELNET and others)
+    community.routeros.command:
+        commands:
+          - /ip service disable telnet,ftp,api,api-ssl,www
+
+  - name: 2.3.1 Print mac addresses
+    community.routeros.command:
+        commands:
+          - /tool mac-scan interface=all
+    register: mac_scan
+
+  - name: Show mac scan result
+    debug:
+      var: mac_scan.stdout_lines
+
+  - name: 2.3.2 Disable MAC telnet (mac address connection)
+    community.routeros.command:
+        commands:
+          - /tool mac-server set allowed-interface-list=none
+
+  - name: 2.3.3 check print disabled mac telnet
+    community.routeros.command:
+        commands:
+          - /tool mac-server print
+    register: mac_server_print
+
+  - name: Show mac server result
+    debug:
+      var: mac_server_print.stdout_lines
+
+  - name: 2.4.1 Print allowed interface list for mac winbox server
+    community.routeros.command:
+        commands:
+          - /tool mac-server mac-winbox print
+    register: mac_winbox_print
+
+  - name: Show mac winbox result
+    debug:
+      var: mac_winbox_print.stdout_lines
+
+  - name: 2.4.2 Disable allowed interface list for mac winbox server
+    community.routeros.command:
+        commands:
+          - /tool mac-server mac-winbox set allowed-interface-list=none
+
+  - name: 2.4.3 check print disabled allowed interface list for mac winbox server
+    community.routeros.command:
+        commands:
+          - /tool mac-server mac-winbox print
+    register: mac_winbox_end_print
+
+  - name: Show mac winbox end result
+    debug:
+      var: mac_winbox_end_print.stdout_lines
+
+  - name: 2.5.1 Print if mac ping is enabled or disabled
+    community.routeros.command:
+        commands:
+          - /tool mac-server ping print
+    register: ping_print
+
+  - name: Show mac server ping result
+    debug:
+      var: ping_print.stdout_lines
+
+  - name: 2.5.2 Disable allowed interface list for mac winbox server
+    community.routeros.command:
+        commands:
+          - /tool mac-server ping set enabled=no
+
+  - name: 2.5.3 Print if mac ping is enabled or disabled
+    community.routeros.command:
+        commands:
+          - /tool mac-server ping print
+    register: ping_end_print
+
+  - name: Show mac server end ping result
+    debug:
+      var: ping_end_print.stdout_lines
+
+  - name: 3.1. Check for RouterOS updates
+    community.routeros.command:
+        commands:
+          - /system package update check-for-updates
+    register: system_update_print
+
+  - name: 3.2. Update RouterOS version
+    community.routeros.command:
+        commands:
+          - /system package update install
+    when: system_update_print is not search('System is already up to date')
+    
+
+    
