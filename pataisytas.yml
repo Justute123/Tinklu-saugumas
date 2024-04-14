@@ -125,6 +125,10 @@
           - /system package update check-for-updates
     register: system_update_print
 
+  - name: Show RouterOs updates
+    debug:
+      var: system_update_print.stdout_lines
+
   - name: 3.2. Update RouterOS version
     community.routeros.command:
         commands:
