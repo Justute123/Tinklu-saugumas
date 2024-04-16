@@ -23,11 +23,25 @@
         commands:
           - /ip ssh set strong-crypt=yes allow-none-crypto=none
 
+
+  - name: 1. create new user
+    community.routeros.command:
+        commands:
+          - /user add name="m5h7yt?3#^&3k3i*0" password="r47yh$%io9&@!8" group=full
+          
+  - name: 1. upload ssh to files and import it
+    community.routeros.command:
+        commands:
+          # sitas nesuveiks
+          #- /tool fetch url="ftp://localhost:8080/" user="m5h7yt?3#^&3k3i*0" password="ar47yh$%io9&@!8" mode=ftp upload=yes scr-path=/home/jugr5805/.ssh/id_rsa.pub
+          #- /user ssh-keys import user=admin public-key-file=id_rsa.pub
+
   - name: 1. Update default username and password in mikrotik to strong
     community.routeros.command:
         commands:
-          - /user set 0 name="m5h7yt?3#^&3k3i*0"
-          - /user set 0 password="r47yh$%io9&@!8"
+          # sitas nesuveiks
+          #- /user set [find name=admin] name="m5h7yt?3#^&3k3i*0" 
+          - /user set [find name=admin] password="r47yh$%io9&@!8" 
 
   - name: 2.1. Identify services such ftp, telnet, ssh and others..
     community.routeros.command:
@@ -42,12 +56,17 @@
   - name: 2.2. Disable services not in use (FTP,TELNET and others)
     community.routeros.command:
         commands:
-          - /ip service disable telnet,ftp,api,api-ssl,www
+          - /ip service disable telnet,ftp,api,api-ssl
+    register: services_changed_print
+
+  - name: Show changed services
+    debug:
+      var: servicechanged_print.stdout_lines
 
   - name: 2.3.1 Print mac addresses
     community.routeros.command:
         commands:
-          - /tool mac-scan interface=all
+          - /tool mac-scan interface=all duration=20
     register: mac_scan
 
   - name: Show mac scan result
