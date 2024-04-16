@@ -33,7 +33,7 @@
     community.routeros.command:
         commands:
           # sitas nesuveiks
-          #- /tool fetch url="ftp://localhost:8080/" user="m5h7yt?3#^&3k3i*0" password="ar47yh$%io9&@!8" mode=ftp upload=yes scr-path=/home/jugr5805/.ssh/id_rsa.pub
+          #- /tool fetch url="ftp://localhost:8080/" user="m5h7yt?3#^&3k3i*0" password="ar47yh$%io9&@!8" mode=ftp upload=yes scr-path="/home/jugr5805/.ssh/id_rsa.pub" dst=path="/webfig/#Files"
           #- /user ssh-keys import user=admin public-key-file=id_rsa.pub
 
   - name: 1. Update default username and password in mikrotik to strong
@@ -51,8 +51,7 @@
 
   - name: Show services
     debug:
-      var: service_print.stdout_lines
-
+      var: service_print.stdout_lines 
   - name: 2.2. Disable services not in use (FTP,TELNET and others)
     community.routeros.command:
         commands:
