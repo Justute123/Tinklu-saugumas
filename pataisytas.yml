@@ -29,14 +29,14 @@
         commands:
           - /user add name="m5h7yt?3#^&3k3i*0" password="r47yh$%io9&@!8" group=full
           
-  - name: 1. upload ssh to files and import it
+  - name: 1. upload ssh to files and import it ???????
     community.routeros.command:
         commands:
           # sitas nesuveiks
           #- /tool fetch url="ftp://localhost:8080/" user="m5h7yt?3#^&3k3i*0" password="ar47yh$%io9&@!8" mode=ftp upload=yes scr-path="/home/jugr5805/.ssh/id_rsa.pub" dst=path="/webfig/#Files"
-          #- /user ssh-keys import user=admin public-key-file=id_rsa.pub
+          #- /user ssh-keys import user="m5h7yt?3#^&3k3i*0" public-key-file=id_rsa.pub
 
-  - name: 1. Update default username and password in mikrotik to strong
+  - name: 1. Update default username and password in mikrotik to strong ?????????
     community.routeros.command:
         commands:
           # sitas nesuveiks
@@ -52,10 +52,10 @@
   - name: Show services
     debug:
       var: service_print.stdout_lines 
-  - name: 2.2. Disable services not in use (FTP,TELNET and others)
+  - name: 2.2. Disable services not in use (TELNET and others)
     community.routeros.command:
         commands:
-          - /ip service disable telnet,ftp,api,api-ssl
+          - /ip service disable telnet,api,api-ssl
     register: services_changed_print
 
   - name: Show changed services
@@ -152,6 +152,58 @@
         commands:
           - /system package update install
     when: system_update_print is not search('System is already up to date')
+
+  - name: 5.1. Secure Router services(Secure strong SSH ciphers)
+    community.routeros.command:
+          commands:
+            - /ip ssh set strong-crypt=yes allow-none-crypto=none
+
+  - name: 5.1. Verify SSH seetings
+    community.routeros.command:
+          commands:
+            - /ip ssh print
+    register: verified_ssh
+
+  - name: Show Verified SSH
+    debug:
+      var: verified_ssh
+
+  - name: 5.2. Enforce secure protocols  FTPS AND HTTPS ????????????????????
+    community.routeros.command:
+          commands:
+            - /ip service set ftps disabled=no
+            - /ip service set www-ssl disabled=no
+
+  - name: 6 Create system backup and regular backup saves
+    community.routeros.command:
+          commands:
+            - /system backup save name=backUP password="r47yh$%io9&@!8"
+            - /system schedular add name=schedu interval=1h start-time=[ /system clock get time] on-event=backUP
+  
+  - name: Print files
+    community.routeros.command:
+          commands:
+            - /file print
+    register: print_files
+
+  - name: Show system files
+    debug:
+      var: print_files
+
+  - name: Store backup securely???
+    community.routeros.command:
+          commands:
+           
+  
+  
+  
+  
+  
+
+      
+            
+    
+
     
 
     
