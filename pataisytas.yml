@@ -21,13 +21,14 @@
   - name: enable ssh strong-crypt
     community.routeros.command:
         commands:
-          - /ip ssh set strong-crypt=yes allow-none-crypto=none
+          - /ip ssh set strong-crypt=yes allow-none-crypto=no
 
 
-  - name: 1. create new user
-    community.routeros.command:
+    - name: 1. Add new user with strong credentials
+      community.routeros.command:
         commands:
-          - /user add name="m5h7yt?3#^&3k3i*0" password="r47yh$%io9&@!8" group=full
+          -/user add name=newadmin password=newpass group=full
+#          -/user remove admin
           
   - name: 1. upload ssh to files and import it ???????
     community.routeros.command:
@@ -36,12 +37,6 @@
           #- /tool fetch url="ftp://localhost:8080/" user="m5h7yt?3#^&3k3i*0" password="ar47yh$%io9&@!8" mode=ftp upload=yes scr-path="/home/jugr5805/.ssh/id_rsa.pub" dst=path="/webfig/#Files"
           #- /user ssh-keys import user="m5h7yt?3#^&3k3i*0" public-key-file=id_rsa.pub
 
-  - name: 1. Update default username and password in mikrotik to strong ?????????
-    community.routeros.command:
-        commands:
-          # sitas nesuveiks
-          #- /user set [find name=admin] name="m5h7yt?3#^&3k3i*0" 
-          - /user set [find name=admin] password="r47yh$%io9&@!8" 
 
   - name: 2.1. Identify services such ftp, telnet, ssh and others..
     community.routeros.command:
@@ -55,7 +50,7 @@
   - name: 2.2. Disable services not in use (TELNET and others)
     community.routeros.command:
         commands:
-          - /ip service disable telnet,api,api-ssl
+          -/ip service disable telnet,ftp,www-ssl,api,winbox,api-ssl
     register: services_changed_print
 
   - name: Show changed services
@@ -137,26 +132,26 @@
     debug:
       var: ping_end_print.stdout_lines
 
-  - name: 3.1. Check for RouterOS updates
-    community.routeros.command:
-        commands:
-          - /system package update check-for-updates
-    register: system_update_print
+  # - name: 3.1. Check for RouterOS updates
+    # community.routeros.command:
+        # commands:
+          # - /system package update check-for-updates
+    # register: system_update_print
 
-  - name: Show RouterOs updates
-    debug:
-      var: system_update_print.stdout_lines
+  # - name: Show RouterOs updates
+    # debug:
+      # var: system_update_print.stdout_lines
 
-  - name: 3.2. Update RouterOS version
-    community.routeros.command:
-        commands:
-          - /system package update install
-    when: system_update_print is not search('System is already up to date')
+  # - name: 3.2. Update RouterOS version
+    # community.routeros.command:
+        # commands:
+          # - /system package update install
+    # when: system_update_print is not search('System is already up to date')
 
   - name: 5.1. Secure Router services(Secure strong SSH ciphers)
     community.routeros.command:
           commands:
-            - /ip ssh set strong-crypt=yes allow-none-crypto=none
+            - /ip ssh set strong-crypt=yes allow-none-crypto=no
 
   - name: 5.1. Verify SSH seetings
     community.routeros.command:
@@ -168,18 +163,19 @@
     debug:
       var: verified_ssh
 
-  - name: 5.2. Enforce secure protocols  FTPS AND HTTPS ????????????????????
-    community.routeros.command:
-          commands:
-            - /ip service set ftps disabled=no
-            - /ip service set www-ssl disabled=no
+  # - name: 5.2. Enforce secure protocols  FTPS AND HTTPS ????????????????????
+    # community.routeros.command:
+          # commands:
+            # # - /ip service set ftps disabled=no
+            # - /ip service set www-ssl disabled=no
 
   - name: 6 Create system backup and regular backup saves
     community.routeros.command:
           commands:
-            - /system backup save name=backUP password="r47yh$%io9&@!8"
-            - /system schedular add name=schedu interval=1h start-time=[ /system clock get time] on-event=backUP
-  
+            - /system backup save name=backup password="router1"
+            - /system scheduler add name=backupschedulerbackup interval=1h start-time=[ /system clock get time] on-event=backUP
+            - /system scheduler print  
+
   - name: Print files
     community.routeros.command:
           commands:
@@ -189,6 +185,7 @@
   - name: Show system files
     debug:
       var: print_files
+      
 
   - name: Store backup securely???
     community.routeros.command:
