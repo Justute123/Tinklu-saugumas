@@ -186,11 +186,7 @@
     debug:
       var: check_files
 
-  - name: 4.2. lets import firewall blacklist
-    community.routeros.command:
-        commands:
-          - /tool fetch url="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt" dst-path="webfig/#Files"
-
+  
   - name: 6 Create system backup and regular backup saves
     community.routeros.command:
           commands:
