@@ -17,26 +17,15 @@
   - name: Gather facts
     community.routeros.facts:
 
-
   - name: enable ssh strong-crypt
     community.routeros.command:
         commands:
           - /ip ssh set strong-crypt=yes allow-none-crypto=no
 
-
-    - name: 1. Add new user with strong credentials
-      community.routeros.command:
-        commands:
-          -/user add name=newadmin password=newpass group=full
-#          -/user remove admin
-          
-  - name: 1. upload ssh to files and import it ???????
+  - name: 1. Add new user with strong credentials
     community.routeros.command:
         commands:
-          # sitas nesuveiks
-          #- /tool fetch url="ftp://localhost:8080/" user="m5h7yt?3#^&3k3i*0" password="ar47yh$%io9&@!8" mode=ftp upload=yes scr-path="/home/jugr5805/.ssh/id_rsa.pub" dst=path="/webfig/#Files"
-          #- /user ssh-keys import user="m5h7yt?3#^&3k3i*0" public-key-file=id_rsa.pub
-
+          -/user add name=newadmin password=newpass group=full
 
   - name: 2.1. Identify services such ftp, telnet, ssh and others..
     community.routeros.command:
@@ -47,6 +36,7 @@
   - name: Show services
     debug:
       var: service_print.stdout_lines 
+
   - name: 2.2. Disable services not in use (TELNET and others)
     community.routeros.command:
         commands:
@@ -57,6 +47,19 @@
     debug:
       var: servicechanged_print.stdout_lines
 
+   # - name: 5.2. Enforce secure protocols  FTPS(a secure way for uploading ssh key to localhost...) AND HTTPS ????????????????????
+    # community.routeros.command:
+          # commands:
+            # # - /ip service set ftps disabled=no
+            # - /ip service set www-ssl disabled=no
+
+  - name: 1. upload ssh to files and import it ???????
+    community.routeros.command:
+        commands:
+          # sitas nesuveiks
+          #- /tool fetch url="ftps://localhost:8080/" user="newadmin password="newpass" mode=ftps upload=yes scr-path="/home/jugr5805/.ssh/id_rsa.pub" dst=path="/webfig/#Files"
+          #- /user ssh-keys import user="newadmin public-key-file=id_rsa.pub
+ 
   - name: 2.3.1 Print mac addresses
     community.routeros.command:
         commands:
@@ -148,7 +151,8 @@
           # - /system package update install
     # when: system_update_print is not search('System is already up to date')
 
-  - name: 5.1. Secure Router services(Secure strong SSH ciphers)
+  #sitas turetu tikriausiai pradzioj buti po susikurimo userio.
+  - name: 5.1. Secure Router services(Secure strong SSH ciphers) 
     community.routeros.command:
           commands:
             - /ip ssh set strong-crypt=yes allow-none-crypto=no
@@ -163,11 +167,28 @@
     debug:
       var: verified_ssh
 
-  # - name: 5.2. Enforce secure protocols  FTPS AND HTTPS ????????????????????
-    # community.routeros.command:
-          # commands:
-            # # - /ip service set ftps disabled=no
-            # - /ip service set www-ssl disabled=no
+  - name: 4.1. firewall upload blacklist from github
+    community.routeros.command:
+        commands:
+          - /tool fetch url="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt" dst-path="webfig/#Files"
+          - /import file=reading.rsc
+         # nuluzo
+         # - /import webfig/#Files
+
+  - name: check if added blacklist to files
+    community.routeros.command:
+          commands:
+            - /file print
+    register: check_files
+
+  - name: Show system files
+    debug:
+      var: check_files
+
+  - name: 4.2. lets import firewall blacklist
+    community.routeros.command:
+        commands:
+          - /tool fetch url="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt" dst-path="webfig/#Files"
 
   - name: 6 Create system backup and regular backup saves
     community.routeros.command:
@@ -187,9 +208,7 @@
       var: print_files
       
 
-  - name: Store backup securely???
-    community.routeros.command:
-          commands:
+
            
   
   
