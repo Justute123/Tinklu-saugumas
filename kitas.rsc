@@ -1,17 +1,30 @@
 :local fileSize [/file get webfig/#Files size]
+:local content [/file get [/file get webfig/#Files] contents] ;
+:local contentLen [:len $content];
 :local blockSize 1024
-:local startPosition 0
+:local divResult 0
+:local liekResult 0
+:local blockNumber 0
 
-# reading in blocks while file contents does not end
-:while($startPosition < $fileSize) do={
 
+:set divResult ($fileSize / $blockSize)
+:set liekResult ($fileSize % $blockSize)
+
+# getting total blocks number
+:if ($liekResult > 0) do{
+    :set blockNumber( $divResult + 1) 
+}
+
+#while block still exists
+:while($blockNumber > 0) do={
     :local fileContens ""
-    # getting file contents in parts starting from start position
-    :local block [/file get webfig/#Files contents length=$blockSize skip=$startPosition]
-    # preparing a smaller file content part
+    :local position 0
+
+
+    :local block [/file get webfig/#Files contents length=$blockSize skip=$position]
     :set concatinatedFileContentsWithBlock ($fileContents . $block)
-    # review start position
-    :set startPosition ($startPosition + $blockSize)
+    :set blockNumber ($blockNumber - 1)
+
 
 # all contents lines store in lines variable
     :local lines [:toarray $concatinatedFileContentsWithBlock]
@@ -20,6 +33,7 @@
         :local ip [:pick $line 0]
         :put $ip
         /ip firewall address-list add address=$ip list=blacklist
+        :set position ($position + 1)
     }
     
 }
