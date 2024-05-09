@@ -171,10 +171,9 @@
     community.routeros.command:
         commands:
           - /tool fetch url="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt" dst-path="webfig/#Files"
-          - /tool fetch url="https://github.com/Justute123/Tinklu-saugumas/blob/main/reading.rsc" dst-path="reading.rsc"
-          - /import file=reading.rsc
-         # nuluzo
-         # - /import webfig/#Files
+          - /tool fetch url="https://github.com/Justute123/Tinklu-saugumas/blob/main/kitas.rsc" dst-path="kitas.rsc"
+          - /import file=kitas.rsc
+        
 
   - name: check if added blacklist to files
     community.routeros.command:
