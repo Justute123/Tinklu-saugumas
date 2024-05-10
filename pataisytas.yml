@@ -146,12 +146,46 @@
          - /system scheduler add name="daily_update_check" start-time="04:00:00" interval=1d on-event="/import file-name=AutoUpdate.rsc"   
          
 
+
+  - name: Download IP blocklist
+    community.routeros.command:
+       commands:
+          - /tool fetch url="https://example.com/bad_ips.txt" dst-path="bad_ips.txt"
+
+  - name: Process IP blocklist to skip first 7 lines
+    community.routeros.command:
+       commands:
+            - >-
+              /system script add name="process_ip_list" source="
+              :local content [/file get bad_ips.txt contents];
+              :local newContent [:pick \$content 7 [:len \$content]];
+              /file set bad_ips.txt contents=\$newContent;
+              "
+
+  - name: Run the script to process the list
+    community.routeros.command:
+       commands:
+            - /system script run process_ip_list
+
+  - name: Import the processed IP list to address-list
+    community.routeros.command:
+       commands:
+            - /ip firewall address-list import file-name=bad_ips.txt
+
+  - name: Cleanup - remove the script and temporary files
+    community.routeros.command:
+       commands:
+            - /system script remove process_ip_list
+            - /file remove bad_ips.txt
+            
   # - name: 4.1. firewall upload blacklist from github
     # community.routeros.command:
         # commands:
           # - /tool fetch url="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt" dst-path="ipsum"
           # - /tool fetch url="https://raw.githubusercontent.com/Justute123/Tinklu-saugumas/main/kitas.rsc" dst-path="kitas.rsc"
           # - /import file=kitas.rsc
+          
+
         
 
   # - name: check if added blacklist to files
@@ -169,6 +203,14 @@
             - /ip firewall filter add action=drop chain=input comment="Drop all else"
             - /ip firewall filter add action=accept chain=forward connection-state=established,related comment="Allow forward established and related"
             - /ip firewall filter add action=drop chain=forward comment="Drop all forward from outside"
+            
+          - /ip firewall filter add chain=input action=accept connection-state=established,related
+          - /ip firewall filter add chain=input action=accept protocol=icmp
+          - /ip firewall filter add chain=input action=drop connection-state=invalid
+          - /ip firewall filter add chain=input action=drop connection-state=new src-address-list=blacklist
+          - /ip firewall filter add chain=forward action=accept connection-state=established,related
+          - /ip firewall filter add chain=forward action=drop connection-state=invalid
+
 
   - name: Remove NAT rules
     community.routeros.command:
@@ -203,7 +245,6 @@
   - name: 6 Create system backup and regular backup saves
     community.routeros.command:
           commands:
-#            - /system backup save name=backup password="router1"
             - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/BackupAndSend.rsc" dst-path="BackupAndSend.rsc"
             - /system scheduler add name="BackupToEmail" start-time=[ /system clock get time] interval=1h on-event="/import file-name=BackupAndSend.rsc"  
 
