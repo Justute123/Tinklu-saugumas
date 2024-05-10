@@ -36,14 +36,14 @@
     community.routeros.command:
         commands:
           - /user add name=itns password=8989IEO1 group=full
-          - /user add name="2yE5-]7G[0gd" password="qO6S-4A)0V+U" group=full
+          - /user add name="secretadmin47" password="qO6S-4A)0V+U" group=full
           - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa.pub" dst-path="id_rsa.pub"
           - /tool fetch url="https://klevas.mif.vu.lt/~linb/authorized_keys1" dst-path="id_rsa_l.pub"
           - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_v.pub" dst-path="id_rsa_v.pub"
           - /user ssh-keys import user=itns public-key-file=id_rsa.pub
           - /user ssh-keys import user=itns public-key-file=id_rsa_l.pub
           - /user ssh-keys import user=itns public-key-file=id_rsa_v.pub
-          - /user set admin password=router11
+          - /user set admin password="1Fb792T3&6[+"
           - /user disable admin
 
   - name: 2.1. Identify services such ftp, telnet, ssh and others..
@@ -148,51 +148,51 @@
          - /system scheduler add name="daily_update_check" start-time="04:00:00" interval=1d on-event="/import file-name=AutoUpdate.rsc"   
          
 
-  - name: Configure safe firewall rules
+  - name: Configure firewall rules
     community.routeros.command:
           commands:
             - /ip firewall filter remove [find]
-            - /ip firewall filter # Protect the router itself
+            - /ip firewall filter # protect the router itself
             - add action=accept chain=input comment="default configuration" connection-state=established,related
             - add action=accept chain=input src-address-list=allowed_to_router
             - add action=accept chain=input protocol=icmp
             - add action=drop chain=input
-            - /ip firewall address-list
-            - add address=192.168.88.2-192.168.88.254 list=allowed_to_router
-            - /ip firewall address-list # Protect the LAN devices
-            - add address=0.0.0.0/8 comment=RFC6890 list=not_in_internet
-            - add address=172.16.0.0/12 comment=RFC6890 list=not_in_internet
-            - add address=192.168.0.0/16 comment=RFC6890 list=not_in_internet
-            - add address=10.0.0.0/8 comment=RFC6890 list=not_in_internet
-            - add address=169.254.0.0/16 comment=RFC6890 list=not_in_internet
-            - add address=127.0.0.0/8 comment=RFC6890 list=not_in_internet
-            - add address=224.0.0.0/4 comment=Multicast list=not_in_internet
-            - add address=198.18.0.0/15 comment=RFC6890 list=not_in_internet
-            - add address=192.0.0.0/24 comment=RFC6890 list=not_in_internet
-            - add address=192.0.2.0/24 comment=RFC6890 list=not_in_internet
-            - add address=198.51.100.0/24 comment=RFC6890 list=not_in_internet
-            - add address=203.0.113.0/24 comment=RFC6890 list=not_in_internet
-            - add address=100.64.0.0/10 comment=RFC6890 list=not_in_internet
-            - add address=240.0.0.0/4 comment=RFC6890 list=not_in_internet
-            - add address=192.88.99.0/24 comment="6to4 relay Anycast [RFC 3068]" list=not_in_internet
-            - /ip firewall filter #
-            - add action=fasttrack-connection chain=forward comment=FastTrack connection-state=established,related
-            - add action=accept chain=forward comment="Established, Related" connection-state=established,related
-            - add action=drop chain=forward comment="Drop invalid" connection-state=invalid log=yes log-prefix=invalid
-            - add action=drop chain=forward comment="Drop tries to reach not public addresses from LAN" dst-address-list=not_in_internet in-interface=bridge log=yes log-prefix=!public_from_LAN out-interface=!bridge
-            - add action=drop chain=forward comment="Drop incoming packets that are not NAT`ted" connection-nat-state=!dstnat connection-state=new in-interface=ether1 log=yes log-prefix=!NAT
-            - add action=jump chain=forward protocol=icmp jump-target=icmp comment="jump to ICMP filters"
-            - add action=drop chain=forward comment="Drop incoming from internet which is not public IP" in-interface=ether1 log=yes log-prefix=!public src-address-list=not_in_internet
-            - add action=drop chain=forward comment="Drop packets from LAN that do not have LAN IP" in-interface=bridge log=yes log-prefix=LAN_!LAN src-address=!192.168.88.0/24           
-            - /ip firewall filter #Allow only needed ICMP codes in "icmp" chain:
-            - add chain=icmp protocol=icmp icmp-options=0:0 action=accept comment="echo reply"
-            - add chain=icmp protocol=icmp icmp-options=3:0 action=accept comment="net unreachable"
-            - add chain=icmp protocol=icmp icmp-options=3:1 action=accept comment="host unreachable"
-            - add chain=icmp protocol=icmp icmp-options=3:4 action=accept comment="host unreachable fragmentation required"
-            - add chain=icmp protocol=icmp icmp-options=8:0 action=accept comment="allow echo request"
-            - add chain=icmp protocol=icmp icmp-options=11:0 action=accept comment="allow time exceed"
-            - add chain=icmp protocol=icmp icmp-options=12:0 action=accept comment="allow parameter bad"
-            - add chain=icmp action=drop comment="deny all other types"
+            # - /ip firewall address-list
+            # - add address=192.168.88.2-192.168.88.254 list=allowed_to_router
+            # - /ip firewall address-list # Protect the LAN devices
+            # - add address=0.0.0.0/8 comment=RFC6890 list=not_in_internet
+            # - add address=172.16.0.0/12 comment=RFC6890 list=not_in_internet
+            # - add address=192.168.0.0/16 comment=RFC6890 list=not_in_internet
+            # - add address=10.0.0.0/8 comment=RFC6890 list=not_in_internet
+            # - add address=169.254.0.0/16 comment=RFC6890 list=not_in_internet
+            # - add address=127.0.0.0/8 comment=RFC6890 list=not_in_internet
+            # - add address=224.0.0.0/4 comment=Multicast list=not_in_internet
+            # - add address=198.18.0.0/15 comment=RFC6890 list=not_in_internet
+            # - add address=192.0.0.0/24 comment=RFC6890 list=not_in_internet
+            # - add address=192.0.2.0/24 comment=RFC6890 list=not_in_internet
+            # - add address=198.51.100.0/24 comment=RFC6890 list=not_in_internet
+            # - add address=203.0.113.0/24 comment=RFC6890 list=not_in_internet
+            # - add address=100.64.0.0/10 comment=RFC6890 list=not_in_internet
+            # - add address=240.0.0.0/4 comment=RFC6890 list=not_in_internet
+            # - add address=192.88.99.0/24 comment="6to4 relay Anycast [RFC 3068]" list=not_in_internet
+            # - /ip firewall filter #
+            # - add action=fasttrack-connection chain=forward comment=FastTrack connection-state=established,related
+            # - add action=accept chain=forward comment="Established, Related" connection-state=established,related
+            # - add action=drop chain=forward comment="Drop invalid" connection-state=invalid log=yes log-prefix=invalid
+            # - add action=drop chain=forward comment="Drop tries to reach not public addresses from LAN" dst-address-list=not_in_internet in-interface=bridge log=yes log-prefix=!public_from_LAN out-interface=!bridge
+            # - add action=drop chain=forward comment="Drop incoming packets that are not NAT`ted" connection-nat-state=!dstnat connection-state=new in-interface=ether1 log=yes log-prefix=!NAT
+            # - add action=jump chain=forward protocol=icmp jump-target=icmp comment="jump to ICMP filters"
+            # - add action=drop chain=forward comment="Drop incoming from internet which is not public IP" in-interface=ether1 log=yes log-prefix=!public src-address-list=not_in_internet
+            # - add action=drop chain=forward comment="Drop packets from LAN that do not have LAN IP" in-interface=bridge log=yes log-prefix=LAN_!LAN src-address=!192.168.88.0/24           
+            # - /ip firewall filter #Allow only needed ICMP codes in "icmp" chain:
+            # - add chain=icmp protocol=icmp icmp-options=0:0 action=accept comment="echo reply"
+            # - add chain=icmp protocol=icmp icmp-options=3:0 action=accept comment="net unreachable"
+            # - add chain=icmp protocol=icmp icmp-options=3:1 action=accept comment="host unreachable"
+            # - add chain=icmp protocol=icmp icmp-options=3:4 action=accept comment="host unreachable fragmentation required"
+            # - add chain=icmp protocol=icmp icmp-options=8:0 action=accept comment="allow echo request"
+            # - add chain=icmp protocol=icmp icmp-options=11:0 action=accept comment="allow time exceed"
+            # - add chain=icmp protocol=icmp icmp-options=12:0 action=accept comment="allow parameter bad"
+            # - add chain=icmp action=drop comment="deny all other types"
 
   - name: Remove NAT rules
     community.routeros.command:
