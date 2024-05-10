@@ -37,15 +37,12 @@
         commands:
           - /user add name=itns password=8989IEO1 group=full
           - /user add name=newadmin password=newpass group=full
-          #public key file from git
-          # -/tool fetch url="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt" dst-path="id_rsa.pub"
-           - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_l.pub" dst-path="id_rsa_l.pub"
-           - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_v.pub" dst-path="id_rsa_v.pub"
-          #-/user ssh-keys import user=newadmin public-key-file=id_rsa.pub
-           - /user ssh-keys import user=itns public-key-file=id_rsa_l.pub
-           - /user ssh-keys import user=itns public-key-file=id_rsa_v.pub
-           - /user set admin password=router11
-           - /user disable admin
+          - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_l.pub" dst-path="id_rsa_l.pub"
+          - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_v.pub" dst-path="id_rsa_v.pub"
+          - /user ssh-keys import user=itns public-key-file=id_rsa_l.pub
+          - /user ssh-keys import user=itns public-key-file=id_rsa_v.pub
+          - /user set admin password=router11
+          - /user disable admin
 
   - name: 2.1. Identify services such ftp, telnet, ssh and others..
     community.routeros.command:
