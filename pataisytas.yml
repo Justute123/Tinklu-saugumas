@@ -53,7 +53,7 @@
 
   - name: Show changed services
     debug:
-      var: servicechanged_print.stdout_lines
+      var: services_changed_print.stdout_lines
 
    # - name: 5.2. Enforce secure protocols  FTPS(a secure way for uploading ssh key to localhost...) AND HTTPS ????????????????????
     # community.routeros.command:
