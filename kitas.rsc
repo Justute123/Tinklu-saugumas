@@ -1,11 +1,11 @@
 #KEISTAS
-:local fileSize [/file get webfig/#Files size]
-:local content [/file get [/file get webfig/#Files] contents] 
-:local contentLen [:len $content]
-:local blockSize 1024
-:local divResult 0
-:local remainResult 0
-:local blockNumber 0
+:local fileSize [/file get webfig/#Files size];
+:local content [/file get [/file get webfig/#Files] contents]; 
+:local contentLen [:len $content];
+:local blockSize 1024;
+:local divResult 0;
+:local remainResult 0;
+:local blockNumber 0;
 
 
 :set divResult ($fileSize / $blockSize)
