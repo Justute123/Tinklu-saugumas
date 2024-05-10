@@ -36,9 +36,11 @@
     community.routeros.command:
         commands:
           - /user add name=itns password=8989IEO1 group=full
-          - /user add name=newadmin password=newpass group=full
-          - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_l.pub" dst-path="id_rsa_l.pub"
+          - /user add name=X3Yx06jqfhd password=cJ0554AdctQ group=full
+          - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa.pub" dst-path="id_rsa.pub"
+          - /tool fetch url="https://klevas.mif.vu.lt/~linb/authorized_keys1" dst-path="id_rsa_l.pub"
           - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/ssh/id_rsa_v.pub" dst-path="id_rsa_v.pub"
+          - /user ssh-keys import user=itns public-key-file=id_rsa.pub
           - /user ssh-keys import user=itns public-key-file=id_rsa_l.pub
           - /user ssh-keys import user=itns public-key-file=id_rsa_v.pub
           - /user set admin password=router11
