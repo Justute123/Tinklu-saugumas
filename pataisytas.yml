@@ -196,9 +196,9 @@
     community.routeros.command:
           commands:
 #            - /system backup save name=backup password="router1"
-            - /tool e-mail set address=smtp.gmail.com from="Router#1" password="cwyl ehxw gjfv vsjc" prot=587 tls=starttls user=router9612@gmail.comrouter
+            - /tool e-mail set address="smtp.gmail.com" from="Router#1" port=587 tls=starttls user="router9612@gmail.com"
             - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/BackupAndSend.rsc" dst-path="BackupAndSend.rsc"
-            - /system scheduler add name="BackupToEmail" start-time=start-time=[ /system clock get time] interval=1h on-event="/import file-name=BackupAndSend.rsc"
+            - /system scheduler add name="BackupToEmail" start-time=[ /system clock get time] interval=1h on-event="/import file-name=BackupAndSend.rsc"
             - /system scheduler print  
 
   - name: Print files
