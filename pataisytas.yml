@@ -217,7 +217,7 @@
     debug:
       var: print_files
       
-        - name: Print scripts
+  - name: Print scripts
     community.routeros.command:
           commands:
             - /system script print
