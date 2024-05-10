@@ -8,34 +8,34 @@
 :local blockNumber 0;
 
 
-:set divResult ($fileSize / $blockSize)
-:set remainResult ($fileSize % $blockSize)
+:set divResult ($fileSize / $blockSize);
+:set remainResult ($fileSize % $blockSize);
 
 # getting total blocks number
 :if ($remainResult > 0) do{
-    :set blockNumber ( $divResult + 1) 
+    :set blockNumber ( $divResult + 1);
 }
 
 # kol block still exists
-:local position 0
+:local position 0;
 
 :while ($blockNumber > 0) do={
-    :local fileContents ""
+    :local fileContents "";
 
-    :local block [/file get webfig/#Files contents length=$blockSize skip=$position]
-    :set fileContents ($fileContents . $block)
-    :set blockNumber ($blockNumber - 1)
+    :local block [/file get webfig/#Files contents length=$blockSize skip=$position];
+    :set fileContents ($fileContents . $block);
+    :set blockNumber ($blockNumber - 1);
 
 
 # all contents lines store in lines variable
-    :local lines [:toarray $fileContents]
+    :local lines [:toarray $fileContents];
     # pick first element of lines and write it to ip variable then print it and save it to blacklist in router.
     :foreach line in=$lines do={
         #nesu tikra ar pick tikrai isrenka ip
-        :local ip [:pick $line 0]
-        :put $ip
+        :local ip [:pick $line 0];
+        :put $ip;
         /ip firewall address-list add address=$ip list=blacklist
-        :set position ($position + 1)
+        :set position ($position + 1);
     }
     
 }
