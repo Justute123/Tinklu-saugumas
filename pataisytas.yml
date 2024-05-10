@@ -159,8 +159,8 @@
           # - /system package update install
     # when: system_update_print is not search('System is already up to date')
     
-   - name: Schedule update checks
-     community.routeros.command:
+  - name: schedule update checks
+    community.routeros.command:
        commands:
          - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/AutoUpdate.rsc" dst-path="AutoUpdate.rsc"
          - /system scheduler add name="daily_update_check" start-time="04:00:00" interval=1d on-event="/import file-name=AutoUpdate.rsc"   
