@@ -4,15 +4,15 @@
 :local contentLen [:len $content]
 :local blockSize 1024
 :local divResult 0
-:local liekResult 0
+:local remainResult 0
 :local blockNumber 0
 
 
 :set divResult ($fileSize / $blockSize)
-:set liekResult ($fileSize % $blockSize)
+:set remainResult ($fileSize % $blockSize)
 
 # getting total blocks number
-:if ($liekResult > 0) do{
+:if ($remainResult > 0) do{
     :set blockNumber ( $divResult + 1) 
 }
 
