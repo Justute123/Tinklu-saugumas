@@ -1,3 +1,4 @@
+#KEISTAS
 :local fileSize [/file get webfig/#Files size]
 :local content [/file get [/file get webfig/#Files] contents] ;
 :local contentLen [:len $content];
