@@ -161,25 +161,25 @@
     # register: check_files
 
   - name: Configure safe firewall rules
-  community.routeros.command:
-    commands:
-      - /ip firewall filter remove [find]
-      - /ip firewall filter add action=drop chain=input connection-state=invalid comment="Drop invalid connections"
-      - /ip firewall filter add action=accept chain=input connection-state=established,related comment="Allow established and related"
-      - /ip firewall filter add action=drop chain=input comment="Drop all else"
-      - /ip firewall filter add action=accept chain=forward connection-state=established,related comment="Allow forward established and related"
-      - /ip firewall filter add action=drop chain=forward comment="Drop all forward from outside"
+    community.routeros.command:
+          commands:
+            - /ip firewall filter remove [find]
+            - /ip firewall filter add action=drop chain=input connection-state=invalid comment="Drop invalid connections"
+            - /ip firewall filter add action=accept chain=input connection-state=established,related comment="Allow established and related"
+            - /ip firewall filter add action=drop chain=input comment="Drop all else"
+            - /ip firewall filter add action=accept chain=forward connection-state=established,related comment="Allow forward established and related"
+            - /ip firewall filter add action=drop chain=forward comment="Drop all forward from outside"
 
-  - name: Remove risky NAT rule
-  community.routeros.command:
-    commands:
-      - /ip firewall nat remove [find comment="NAT for all ports"]
+  - name: Remove NAT rules
+    community.routeros.command:
+          commands:
+            - /ip firewall nat remove [find comment="NAT"]
 
   - name: Remove guest user and group
-  community.routeros.command:
-    commands:
-      - /user remove [find name="guest"]
-      - /user group remove [find name="guest"]
+    community.routeros.command:
+          commands:
+            - /user remove [find name="guest"]
+            - /user group remove [find name="guest"]
 
   - name: Show system files
     debug:
