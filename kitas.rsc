@@ -1,7 +1,7 @@
 #KEISTAS
 :local fileSize [/file get webfig/#Files size]
-:local content [/file get [/file get webfig/#Files] contents] ;
-:local contentLen [:len $content];
+:local content [/file get [/file get webfig/#Files] contents] 
+:local contentLen [:len $content]
 :local blockSize 1024
 :local divResult 0
 :local liekResult 0
