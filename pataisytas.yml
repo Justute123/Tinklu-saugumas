@@ -203,9 +203,7 @@
   - name: set up email
     community.routeros.command:
           commands:
-            - /tool e-mail set server="smtp.gmail.com" from="Router#1" port=587 tls=starttls user="router9612@gmail.com"
-            - /tool e-mail print
-
+            - /tool e-mail set address="smtp.gmail.com" from="Router#1" port=587 tls=starttls user="router9612@gmail.com"
 
   - name: check email changes
     community.routeros.command:
