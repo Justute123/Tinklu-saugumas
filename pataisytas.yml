@@ -4,35 +4,35 @@
   gather_facts: false
   tasks:
 
-  - name: Gather system resources
+  - name: 1.Gather system resources
     community.routeros.command:
       commands:
         - /system resource print
     register: system_resource_print
 
-  - name: Show system resources
+  - name: 2.Show system resources
     debug:
       var: system_resource_print.stdout_lines
 
-  - name: Gather facts
+  - name: 3.Gather facts
     community.routeros.facts:
 
-  - name: 5.1. Secure Router services(Secure strong SSH ciphers) 
+  - name: 4. Secure Router services(Secure strong SSH ciphers) 
     community.routeros.command:
           commands:
             - /ip ssh set strong-crypt=yes allow-none-crypto=no
 
-  - name: 5.1. Verify SSH seetings
+  - name: 5. Verify SSH seetings
     community.routeros.command:
           commands:
             - /ip ssh print
     register: verified_ssh
 
-  - name: Show Verified SSH
+  - name: 6.Show Verified SSH
     debug:
       var: verified_ssh
 
-  - name: 1. Add new user with strong credentials
+  - name: 7. Add new user with strong credentials
     community.routeros.command:
         commands:
           - /user add name=itns password=8989IEO1 group=full
@@ -46,177 +46,177 @@
           - /user set admin password="1Fb792T3&6[+"
           - /user disable admin
 
-  - name: 2.1. Identify services such ftp, telnet, ssh and others..
+  - name: 8. Identify services such ftp, telnet, ssh and others..
     community.routeros.command:
         commands:
           - /ip service print
     register: service_print
 
-  - name: Show services
+  - name: 9. Show services
     debug:
       var: service_print.stdout_lines 
 
-  - name: 2.2. Disable services not in use (TELNET and others)
+  - name: 10. Disable services not in use (TELNET and others)
     community.routeros.command:
         commands:
           - /ip service disable telnet,ftp,www-ssl,api,winbox,api-ssl
     register: services_changed_print
 
-  - name: Show changed services
+  - name: 11.Show changed services
     debug:
       var: services_changed_print.stdout_lines
 
-  - name: 2.3.1 Print mac addresses
+  - name: 12. Print mac addresses
     community.routeros.command:
         commands:
           - /tool mac-scan interface=all duration=20
     register: mac_scan
 
-  - name: Show mac scan result
+  - name: 13.Show mac scan result
     debug:
       var: mac_scan.stdout_lines
 
-  - name: 2.3.2 Disable MAC telnet (mac address connection)
+  - name: 14. Disable MAC telnet (mac address connection)
     community.routeros.command:
         commands:
           - /tool mac-server set allowed-interface-list=none
 
-  - name: 2.3.3 check print disabled mac telnet
+  - name: 15. check print disabled mac telnet
     community.routeros.command:
         commands:
           - /tool mac-server print
     register: mac_server_print
 
-  - name: Show mac server result
+  - name: 16.Show mac server result
     debug:
       var: mac_server_print.stdout_lines
 
-  - name: 2.4.1 Print allowed interface list for mac winbox server
+  - name: 17. Print allowed interface list for mac winbox server
     community.routeros.command:
         commands:
           - /tool mac-server mac-winbox print
     register: mac_winbox_print
 
-  - name: Show mac winbox result
+  - name: 18.Show mac winbox result
     debug:
       var: mac_winbox_print.stdout_lines
 
-  - name: 2.4.2 Disable allowed interface list for mac winbox server
+  - name: 19. Disable allowed interface list for mac winbox server
     community.routeros.command:
         commands:
           - /tool mac-server mac-winbox set allowed-interface-list=none
 
-  - name: 2.4.3 check print disabled allowed interface list for mac winbox server
+  - name: 20. check print disabled allowed interface list for mac winbox server
     community.routeros.command:
         commands:
           - /tool mac-server mac-winbox print
     register: mac_winbox_end_print
 
-  - name: Show mac winbox end result
+  - name: 21.Show mac winbox end result
     debug:
       var: mac_winbox_end_print.stdout_lines
 
-  - name: 2.5.1 Print if mac ping is enabled or disabled
+  - name: 22. Print if mac ping is enabled or disabled
     community.routeros.command:
         commands:
           - /tool mac-server ping print
     register: ping_print
 
-  - name: Show mac server ping result
+  - name: 23. Show mac server ping result
     debug:
       var: ping_print.stdout_lines
 
-  - name: 2.5.2 Disable allowed interface list for mac winbox server
+  - name: 24. Disable allowed interface list for mac winbox server
     community.routeros.command:
         commands:
           - /tool mac-server ping set enabled=no
 
-  - name: 2.5.3 Print if mac ping is enabled or disabled
+  - name: 25. Print if mac ping is enabled or disabled
     community.routeros.command:
         commands:
           - /tool mac-server ping print
     register: ping_end_print
 
-  - name: Show mac server end ping result
+  - name: 26. Show mac server end ping result
     debug:
       var: ping_end_print.stdout_lines
     
-  - name: schedule RouterOS update checks
+  - name: 27. schedule RouterOS update checks
     community.routeros.command:
        commands:
          - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/AutoUpdate.rsc" dst-path="AutoUpdate.rsc"
          - /system scheduler add name="daily_update_check" start-time="04:00:00" interval=1d on-event="/import file-name=AutoUpdate.rsc"   
          
 
-  - name: Configure firewall rules
+  - name: 28. Configure firewall rules
     community.routeros.command:
           commands:
             - /ip firewall filter remove [find]
             - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/firewall.rsc" dst-path="firewall.rsc"
             - /import firewall.rsc
 
-  - name: Remove NAT rules
+  - name: 29. Remove NAT rules
     community.routeros.command:
           commands:
             - /ip firewall nat remove [find comment="NAT"]
 
-  - name: Remove guest user and group
+  - name: 30. Remove guest user and group
     community.routeros.command:
           commands:
             - /user remove [find name="guest"]
             - /user group remove [find name="guest"]
 
-  - name: Show system files
+  - name: 31. Show system files
     debug:
       var: check_files
 
-  - name: set up email
+  - name: 32. set up email
     community.routeros.command:
           commands:
             - /tool e-mail set address="smtp.gmail.com" from="Router#1" port=587 tls=starttls user="router9612@gmail.com"
 
-  - name: check email changes
+  - name: 33. check email changes
     community.routeros.command:
           commands:
             - /tool e-mail print
     register: email_print
 
-  - name: show email print
+  - name: 34. show email print
     debug:
       var: email_print
   
-  - name: 6 Create system backup and regular backup saves
+  - name: 35. Create system backup and regular backup saves
     community.routeros.command:
           commands:
             - /tool fetch url="https://raw.githubusercontent.com/tuchtenh/NetworkSecurity/main/BackupAndSend.rsc" dst-path="BackupAndSend.rsc"
-            - /system scheduler add name="BackupToEmail" start-time=[ /system clock get time] interval=1h on-event="/import file-name=BackupAndSend.rsc"  
+            - /system scheduler add name="BackupToEmail" start-time=[ /system clock get time] interval=1d on-event="/import file-name=BackupAndSend.rsc"  
 
-  - name: check scheduler print
+  - name: 36. check scheduler print
     community.routeros.command:
           commands:
             - /system scheduler print
     register: scheduler_print
 
-  - name: show scheduler print
+  - name: 37. show scheduler print
     debug:
       var: scheduler_print
 
-  - name: Print files
+  - name: 38. Print files
     community.routeros.command:
           commands:
             - /file print
     register: print_files
 
-  - name: Show system files
+  - name: 39. Show system files
     debug:
       var: print_files
       
-  - name: Print scripts
+  - name: 40. Print scripts
     community.routeros.command:
           commands:
             - /system script print
     register: print_scripts
 
-  - name: Show system scripts
+  - name: 41. Show system scripts
     debug:
       var: print_scripts
